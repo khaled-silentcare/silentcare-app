@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SilentCare</title>
+</head>
+<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
+
+  <h1>SilentCare</h1>
+
+  <input placeholder="Email"><br><br>
+  <input placeholder="Password" type="password"><br><br>
+
+  <button onclick="goDashboard()">Login</button>
+
+  <div id="dashboard" style="display:none; margin-top:50px;">
+    <h2>Dashboard</h2>
+    <p>Status: Active</p>
+    <p>Last Activity: 20 min ago</p>
+  </div>
+
+  <script>
+    function goDashboard() {
+      document.getElementById("dashboard").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
