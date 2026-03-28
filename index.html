@@ -1,28 +1,457 @@
-<!DOCTYPE html>
-<html>
+ <!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SilentCare</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef6ff, #f7fbff, #eef2ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .phone {
+      width: 360px;
+      max-width: 100%;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      text-align: center;
+      padding: 28px 20px;
+    }
+
+    .logo {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .content {
+      padding: 22px;
+    }
+
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      color: #334155;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #334155;
+      font-weight: bold;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      opacity: 0.95;
+    }
+
+    .small-note {
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .topbar h2 {
+      font-size: 30px;
+      color: #0f172a;
+    }
+
+    .topbar p {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .logout {
+      background: none;
+      border: none;
+      color: #2563eb;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .stat .label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .stat .value {
+      font-size: 22px;
+      font-weight: bold;
+      color: #0f172a;
+    }
+
+    .green {
+      color: #16a34a !important;
+    }
+
+    .section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-header h3 {
+      font-size: 20px;
+      color: #0f172a;
+    }
+
+    .badge {
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .item:last-child {
+      margin-bottom: 0;
+    }
+
+    .item .label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .item .text {
+      font-size: 15px;
+      color: #0f172a;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .alert-box {
+      background: #fefce8;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .alert-box .main {
+      color: #a16207;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .alert-box .sub {
+      color: #a16207;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: #2563eb;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .danger-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .danger-box h3 {
+      color: #b91c1c;
+      margin-bottom: 6px;
+    }
+
+    .danger-box p {
+      color: #b91c1c;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .back {
+      background: none;
+      border: none;
+      color: #2563eb;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+  </style>
 </head>
-<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
+<body>
+  <div class="phone">
+    <div id="loginScreen" class="card">
+      <div class="header">
+        <div class="logo">🛡️</div>
+        <h1>SilentCare</h1>
+        <p>Smart Monitoring System for Elderly Safety</p>
+      </div>
 
-  <h1>SilentCare</h1>
+      <div class="content">
+        <div class="info-box">
+          Monitor activity, detect unusual patterns, and notify family members quickly.
+        </div>
 
-  <input placeholder="Email"><br><br>
-  <input placeholder="Password" type="password"><br><br>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="Enter email" />
+        </div>
 
-  <button onclick="goDashboard()">Login</button>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" placeholder="Enter password" />
+        </div>
 
-  <div id="dashboard" style="display:none; margin-top:50px;">
-    <h2>Dashboard</h2>
-    <p>Status: Active</p>
-    <p>Last Activity: 20 min ago</p>
+        <button class="btn" onclick="showDashboard()">Login</button>
+        <div class="small-note">Prototype demo for project presentation</div>
+      </div>
+    </div>
+
+    <div id="dashboardScreen" class="hidden">
+      <div class="card">
+        <div class="content">
+          <div class="topbar">
+            <div>
+              <p style="color:#2563eb;font-weight:bold;">SilentCare</p>
+              <h2>Dashboard</h2>
+              <p>Live monitoring overview</p>
+            </div>
+            <button class="logout" onclick="showLogin()">Logout</button>
+          </div>
+
+          <div class="grid">
+            <div class="stat">
+              <div class="label">System Status</div>
+              <div class="value green">Active</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px;">Monitoring is running</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Last Activity</div>
+              <div class="value">20 min</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px;">Recent movement detected</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3>Activity Monitoring</h3>
+              <div class="badge">Normal</div>
+            </div>
+
+            <div class="item">
+              <div class="label">Movement Pattern</div>
+              <div class="text">Normal daily activity detected</div>
+            </div>
+
+            <div class="item">
+              <div class="label">Phone Usage</div>
+              <div class="text">Last usage: 35 minutes ago</div>
+            </div>
+
+            <div class="item">
+              <div class="label">Pattern Analysis Logic</div>
+              <div class="text">Threshold-based anomaly detection</div>
+            </div>
+
+            <div class="item">
+              <div class="label">Home Activity</div>
+              <div class="text">Door and indoor motion are within normal range</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3>Alerts</h3>
+              <button class="link-btn" onclick="showAlerts()">View</button>
+            </div>
+
+            <div class="alert-box">
+              <div class="main">No alerts detected</div>
+              <div class="sub">System checks movement, phone usage, and home activity patterns continuously.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="alertsScreen" class="hidden">
+      <div class="card">
+        <div class="content">
+          <button class="back" onclick="showDashboard()">← Back to Dashboard</button>
+
+          <div class="danger-box">
+            <h3>Abnormal Activity Detected</h3>
+            <p>No movement detected for 2 hours and no recent phone activity.</p>
+          </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3>Alert Details</h3>
+            </div>
+
+            <div class="item">
+              <div class="label">Last movement</div>
+              <div class="text">2 hours ago</div>
+            </div>
+
+            <div class="item">
+              <div class="label">Phone usage</div>
+              <div class="text">Not detected</div>
+            </div>
+
+            <div class="item">
+              <div class="label">Door activity</div>
+              <div class="text">No recent activity</div>
+            </div>
+          </div>
+
+          <button class="btn" style="background:#dc2626;" onclick="notifyFamily()">Notify Family</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    function goDashboard() {
-      document.getElementById("dashboard").style.display = "block";
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboardScreen').classList.add('hidden');
+      document.getElementById('alertsScreen').classList.add('hidden');
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.remove('hidden');
+      document.getElementById('alertsScreen').classList.add('hidden');
+    }
+
+    function showAlerts() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboardScreen').classList.add('hidden');
+      document.getElementById('alertsScreen').classList.remove('hidden');
+    }
+
+    function notifyFamily() {
+      alert('Family notified successfully');
+      showDashboard();
     }
   </script>
-
 </body>
 </html>
