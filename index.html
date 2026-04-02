@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -322,6 +322,15 @@
       padding: 6px 10px;
       border-radius: 999px;
     }
+
+    .notify-btn {
+      background: #dc2626;
+      margin-top: 6px;
+    }
+
+    .notify-btn:hover {
+      opacity: 0.95;
+    }
   </style>
 </head>
 <body>
@@ -409,6 +418,10 @@
               <div class="label">Home Activity</div>
               <div class="text">Door and indoor motion are within normal range</div>
             </div>
+
+            <button class="btn notify-btn" onclick="notifyFamily()">
+              🚨 Notify Family
+            </button>
           </div>
 
           <div class="section">
@@ -436,7 +449,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -472,7 +484,9 @@
             </div>
           </div>
 
-          <button class="btn" style="background:#dc2626;" onclick="notifyFamily()">Notify Family</button>
+          <button class="btn" style="background:#dc2626;" onclick="notifyFamily()">
+            Notify Family
+          </button>
         </div>
       </div>
     </div>
@@ -511,7 +525,7 @@
       log.prepend(newItem);
 
       showDashboard();
-}
+    }
   </script>
 </body>
 </html>
