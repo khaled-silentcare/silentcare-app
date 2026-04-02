@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -293,6 +293,35 @@
       margin-bottom: 12px;
       font-size: 14px;
     }
+
+    .success-box {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .success-box .main {
+      color: #15803d;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .success-box .sub {
+      color: #15803d;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .blue-badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
   </style>
 </head>
 <body>
@@ -327,6 +356,11 @@
     <div id="dashboardScreen" class="hidden">
       <div class="card">
         <div class="content">
+          <div id="notificationSuccess" class="success-box hidden">
+            <div class="main">Notification Sent Successfully</div>
+            <div class="sub">Family members were notified through the emergency alert system.</div>
+          </div>
+
           <div class="topbar">
             <div>
               <p style="color:#2563eb;font-weight:bold;">SilentCare</p>
@@ -384,10 +418,25 @@
             </div>
 
             <div class="alert-box">
-              <div class="main">No alerts detected</div>
+              <div class="main" id="alertStatusText">No alerts detected</div>
               <div class="sub">System checks movement, phone usage, and home activity patterns continuously.</div>
             </div>
           </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3>Notification Log</h3>
+              <div class="blue-badge">Live Demo</div>
+            </div>
+
+            <div id="notificationLog">
+              <div class="item">
+                <div class="label">10:20 AM</div>
+                <div class="text">System check completed successfully</div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -449,9 +498,20 @@
     }
 
     function notifyFamily() {
-      alert('Family notified successfully');
+      document.getElementById('notificationSuccess').classList.remove('hidden');
+      document.getElementById('alertStatusText').textContent = 'Family notified successfully';
+
+      const log = document.getElementById('notificationLog');
+      const newItem = document.createElement('div');
+      newItem.className = 'item';
+      newItem.innerHTML = `
+        <div class="label">Now</div>
+        <div class="text">Emergency alert sent to family members</div>
+      `;
+      log.prepend(newItem);
+
       showDashboard();
-    }
+}
   </script>
 </body>
 </html>
