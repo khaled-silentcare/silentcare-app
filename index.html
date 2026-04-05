@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -212,6 +212,15 @@
       border-radius: 999px;
     }
 
+    .blue-badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
     .item {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -314,22 +323,12 @@
       line-height: 1.4;
     }
 
-    .blue-badge {
-      background: #eff6ff;
-      color: #1d4ed8;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 6px 10px;
-      border-radius: 999px;
-    }
-
     .notify-btn {
       background: #dc2626;
-      margin-top: 6px;
     }
 
-    .notify-btn:hover {
-      opacity: 0.95;
+    .check-btn {
+      background: #0f766e;
     }
   </style>
 </head>
@@ -382,31 +381,31 @@
           <div class="grid">
             <div class="stat">
               <div class="label">System Status</div>
-              <div class="value green">Active</div>
-              <div style="font-size:12px;color:#64748b;margin-top:4px;">Monitoring is running</div>
+              <div class="value green" id="systemStatus">Active</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px;" id="systemStatusNote">Monitoring is running</div>
             </div>
 
             <div class="stat">
               <div class="label">Last Activity</div>
-              <div class="value">20 min</div>
-              <div style="font-size:12px;color:#64748b;margin-top:4px;">Recent movement detected</div>
+              <div class="value" id="lastActivityValue">20 min</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px;" id="lastActivityNote">Recent movement detected</div>
             </div>
           </div>
 
           <div class="section">
             <div class="section-header">
               <h3>Activity Monitoring</h3>
-              <div class="badge">Normal</div>
+              <div class="badge" id="activityBadge">Normal</div>
             </div>
 
             <div class="item">
               <div class="label">Movement Pattern</div>
-              <div class="text">Normal daily activity detected</div>
+              <div class="text" id="movementPattern">Normal daily activity detected</div>
             </div>
 
             <div class="item">
               <div class="label">Phone Usage</div>
-              <div class="text">Last usage: 35 minutes ago</div>
+              <div class="text" id="phoneUsage">Last usage: 35 minutes ago</div>
             </div>
 
             <div class="item">
@@ -416,8 +415,12 @@
 
             <div class="item">
               <div class="label">Home Activity</div>
-              <div class="text">Door and indoor motion are within normal range</div>
+              <div class="text" id="homeActivity">Door and indoor motion are within normal range</div>
             </div>
+
+            <button class="btn check-btn" onclick="checkActivity()">
+              🔍 Check Activity
+            </button>
 
             <button class="btn notify-btn" onclick="notifyFamily()">
               🚨 Notify Family
@@ -432,7 +435,7 @@
 
             <div class="alert-box">
               <div class="main" id="alertStatusText">No alerts detected</div>
-              <div class="sub">System checks movement, phone usage, and home activity patterns continuously.</div>
+              <div class="sub" id="alertSubText">System checks movement, phone usage, and home activity patterns continuously.</div>
             </div>
           </div>
 
@@ -459,8 +462,8 @@
           <button class="back" onclick="showDashboard()">← Back to Dashboard</button>
 
           <div class="danger-box">
-            <h3>Abnormal Activity Detected</h3>
-            <p>No movement detected for 2 hours and no recent phone activity.</p>
+            <h3 id="alertTitle">Abnormal Activity Detected</h3>
+            <p id="alertDescription">No movement detected for 2 hours and no recent phone activity.</p>
           </div>
 
           <div class="section">
@@ -470,21 +473,21 @@
 
             <div class="item">
               <div class="label">Last movement</div>
-              <div class="text">2 hours ago</div>
+              <div class="text" id="detailMovement">2 hours ago</div>
             </div>
 
             <div class="item">
               <div class="label">Phone usage</div>
-              <div class="text">Not detected</div>
+              <div class="text" id="detailPhone">Not detected</div>
             </div>
 
             <div class="item">
               <div class="label">Door activity</div>
-              <div class="text">No recent activity</div>
+              <div class="text" id="detailDoor">No recent activity</div>
             </div>
           </div>
 
-          <button class="btn" style="background:#dc2626;" onclick="notifyFamily()">
+          <button class="btn notify-btn" onclick="notifyFamily()">
             Notify Family
           </button>
         </div>
@@ -511,19 +514,123 @@
       document.getElementById('alertsScreen').classList.remove('hidden');
     }
 
-    function notifyFamily() {
-      document.getElementById('notificationSuccess').classList.remove('hidden');
-      document.getElementById('alertStatusText').textContent = 'Family notified successfully';
-
+    function addLog(message) {
       const log = document.getElementById('notificationLog');
       const newItem = document.createElement('div');
       newItem.className = 'item';
       newItem.innerHTML = `
         <div class="label">Now</div>
-        <div class="text">Emergency alert sent to family members</div>
+        <div class="text">${message}</div>
       `;
       log.prepend(newItem);
+    }
 
+    function checkActivity() {
+      let activity = Math.random();
+
+      const systemStatus = document.getElementById("systemStatus");
+      const systemStatusNote = document.getElementById("systemStatusNote");
+      const lastActivityValue = document.getElementById("lastActivityValue");
+      const lastActivityNote = document.getElementById("lastActivityNote");
+      const movementPattern = document.getElementById("movementPattern");
+      const phoneUsage = document.getElementById("phoneUsage");
+      const homeActivity = document.getElementById("homeActivity");
+      const activityBadge = document.getElementById("activityBadge");
+      const alertStatusText = document.getElementById("alertStatusText");
+      const alertSubText = document.getElementById("alertSubText");
+      const alertTitle = document.getElementById("alertTitle");
+      const alertDescription = document.getElementById("alertDescription");
+      const detailMovement = document.getElementById("detailMovement");
+      const detailPhone = document.getElementById("detailPhone");
+      const detailDoor = document.getElementById("detailDoor");
+
+      if (activity < 0.2) {
+        systemStatus.textContent = "Emergency";
+        systemStatus.style.color = "red";
+        systemStatusNote.textContent = "Immediate attention required";
+
+        lastActivityValue.textContent = "2 hrs ago";
+        lastActivityNote.textContent = "No recent movement detected";
+
+        movementPattern.textContent = "No movement detected for a long period";
+        phoneUsage.textContent = "No recent phone activity";
+        homeActivity.textContent = "Door and indoor motion show no recent activity";
+        activityBadge.textContent = "Emergency";
+        activityBadge.style.background = "#fee2e2";
+        activityBadge.style.color = "#b91c1c";
+
+        alertStatusText.textContent = "🚨 Emergency detected!";
+        alertStatusText.style.color = "red";
+        alertSubText.textContent = "The system detected no movement and no phone usage for an extended period.";
+
+        alertTitle.textContent = "Emergency Activity Detected";
+        alertDescription.textContent = "No movement detected for 2 hours and no recent phone activity.";
+        detailMovement.textContent = "2 hours ago";
+        detailPhone.textContent = "Not detected";
+        detailDoor.textContent = "No recent activity";
+
+        addLog("🚨 Emergency detected by activity monitoring system");
+      } else if (activity < 0.5) {
+        systemStatus.textContent = "Warning";
+        systemStatus.style.color = "orange";
+        systemStatusNote.textContent = "Low activity pattern detected";
+
+        lastActivityValue.textContent = "50 min ago";
+        lastActivityNote.textContent = "Activity lower than normal";
+
+        movementPattern.textContent = "Movement level is lower than normal";
+        phoneUsage.textContent = "Last usage: 50 minutes ago";
+        homeActivity.textContent = "Limited activity detected at home";
+        activityBadge.textContent = "Warning";
+        activityBadge.style.background = "#ffedd5";
+        activityBadge.style.color = "#c2410c";
+
+        alertStatusText.textContent = "⚠️ Warning detected";
+        alertStatusText.style.color = "orange";
+        alertSubText.textContent = "The system detected lower-than-normal activity and recommends checking the user.";
+
+        alertTitle.textContent = "Warning Activity Detected";
+        alertDescription.textContent = "Low movement level and reduced phone usage were detected.";
+        detailMovement.textContent = "50 minutes ago";
+        detailPhone.textContent = "50 minutes ago";
+        detailDoor.textContent = "Limited activity";
+
+        addLog("⚠️ Warning: low activity detected");
+      } else {
+        systemStatus.textContent = "Active";
+        systemStatus.style.color = "green";
+        systemStatusNote.textContent = "Monitoring is running";
+
+        lastActivityValue.textContent = "20 min";
+        lastActivityNote.textContent = "Recent movement detected";
+
+        movementPattern.textContent = "Normal daily activity detected";
+        phoneUsage.textContent = "Last usage: 35 minutes ago";
+        homeActivity.textContent = "Door and indoor motion are within normal range";
+        activityBadge.textContent = "Normal";
+        activityBadge.style.background = "#dcfce7";
+        activityBadge.style.color = "#15803d";
+
+        alertStatusText.textContent = "No alerts detected";
+        alertStatusText.style.color = "#a16207";
+        alertSubText.textContent = "System checks movement, phone usage, and home activity patterns continuously.";
+
+        alertTitle.textContent = "Abnormal Activity Detected";
+        alertDescription.textContent = "No movement detected for 2 hours and no recent phone activity.";
+        detailMovement.textContent = "2 hours ago";
+        detailPhone.textContent = "Not detected";
+        detailDoor.textContent = "No recent activity";
+
+        addLog("✅ Normal activity detected");
+      }
+    }
+
+    function notifyFamily() {
+      document.getElementById('notificationSuccess').classList.remove('hidden');
+      document.getElementById('alertStatusText').textContent = 'Family notified successfully';
+      document.getElementById('alertStatusText').style.color = '#15803d';
+      document.getElementById('alertSubText').textContent = 'Emergency notification was simulated and logged successfully.';
+      addLog("📩 Emergency alert sent to family members (simulated)");
       showDashboard();
     }
   </script>
