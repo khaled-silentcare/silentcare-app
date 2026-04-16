@@ -83,7 +83,9 @@
       font-weight: bold;
     }
 
-    .field input {
+    .field input,
+    .field select,
+    .field textarea {
       width: 100%;
       padding: 12px 14px;
       border: 1px solid #cbd5e1;
@@ -92,7 +94,9 @@
       outline: none;
     }
 
-    .field input:focus {
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     }
@@ -112,6 +116,11 @@
 
     .btn:hover {
       opacity: 0.95;
+    }
+
+    .secondary-btn {
+      background: #f1f5f9;
+      color: #0f172a;
     }
 
     .small-note {
@@ -330,10 +339,43 @@
     .check-btn {
       background: #0f766e;
     }
+
+    .profile-card {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .profile-card h4 {
+      color: #1d4ed8;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .profile-line {
+      font-size: 14px;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .verification-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 14px;
+      color: #1e3a8a;
+      font-size: 14px;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
   <div class="phone">
+
+    <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="card">
       <div class="header">
         <div class="logo">🛡️</div>
@@ -348,25 +390,110 @@
 
         <div class="field">
           <label>Email</label>
-          <input type="email" placeholder="Enter email" />
+          <input id="loginEmail" type="email" placeholder="Enter email" />
         </div>
 
         <div class="field">
           <label>Password</label>
-          <input type="password" placeholder="Enter password" />
+          <input id="loginPassword" type="password" placeholder="Enter password" />
         </div>
 
-        <button class="btn" onclick="showDashboard()">Login</button>
+        <button class="btn" onclick="loginUser()">Login</button>
+        <button class="btn secondary-btn" onclick="showCreateAccount()">Create New Account</button>
+
         <div class="small-note">Prototype demo for project presentation</div>
       </div>
     </div>
 
+    <!-- CREATE ACCOUNT SCREEN -->
+    <div id="createAccountScreen" class="card hidden">
+      <div class="header">
+        <div class="logo">👤</div>
+        <h1>Create Account</h1>
+        <p>Enter elderly profile information</p>
+      </div>
+
+      <div class="content">
+        <div class="field">
+          <label>Full Name</label>
+          <input id="fullName" type="text" placeholder="Enter full name" />
+        </div>
+
+        <div class="field">
+          <label>Age</label>
+          <input id="age" type="number" placeholder="Enter age" />
+        </div>
+
+        <div class="field">
+          <label>Weight (kg)</label>
+          <input id="weight" type="number" placeholder="Enter weight" />
+        </div>
+
+        <div class="field">
+          <label>Health Condition</label>
+          <input id="healthCondition" type="text" placeholder="Example: Diabetes, Heart condition" />
+        </div>
+
+        <div class="field">
+          <label>Average Daily Steps</label>
+          <input id="dailySteps" type="number" placeholder="Enter average steps per day" />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input id="registerEmail" type="email" placeholder="Enter email" />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input id="registerPassword" type="password" placeholder="Create password" />
+        </div>
+
+        <button class="btn" onclick="registerUser()">Create Account</button>
+        <button class="btn secondary-btn" onclick="showLogin()">Back to Login</button>
+      </div>
+    </div>
+
+    <!-- EMAIL VERIFICATION SCREEN -->
+    <div id="verificationScreen" class="card hidden">
+      <div class="header">
+        <div class="logo">📩</div>
+        <h1>Email Verification</h1>
+        <p>Enter the verification code</p>
+      </div>
+
+      <div class="content">
+        <div class="verification-box">
+          A verification code was generated for this demo.<br />
+          <strong>Your code: <span id="generatedCodeText">------</span></strong>
+        </div>
+
+        <div class="field">
+          <label>Verification Code</label>
+          <input id="verificationCodeInput" type="text" placeholder="Enter 6-digit code" />
+        </div>
+
+        <button class="btn" onclick="verifyCode()">Verify Email</button>
+        <button class="btn secondary-btn" onclick="showCreateAccount()">Back</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
     <div id="dashboardScreen" class="hidden">
       <div class="card">
         <div class="content">
           <div id="notificationSuccess" class="success-box hidden">
             <div class="main">Notification Sent Successfully</div>
             <div class="sub">Family members were notified through the emergency alert system.</div>
+          </div>
+
+          <div class="profile-card">
+            <h4>Elderly Profile</h4>
+            <div class="profile-line"><strong>Name:</strong> <span id="profileName">-</span></div>
+            <div class="profile-line"><strong>Age:</strong> <span id="profileAge">-</span></div>
+            <div class="profile-line"><strong>Weight:</strong> <span id="profileWeight">-</span> kg</div>
+            <div class="profile-line"><strong>Health Condition:</strong> <span id="profileHealth">-</span></div>
+            <div class="profile-line"><strong>Daily Steps:</strong> <span id="profileSteps">-</span></div>
           </div>
 
           <div class="topbar">
@@ -456,6 +583,7 @@
       </div>
     </div>
 
+    <!-- ALERTS SCREEN -->
     <div id="alertsScreen" class="hidden">
       <div class="card">
         <div class="content">
@@ -496,22 +624,117 @@
   </div>
 
   <script>
-    function showLogin() {
-      document.getElementById('loginScreen').classList.remove('hidden');
+    let storedUser = null;
+    let generatedVerificationCode = "";
+
+    function hideAllScreens() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('createAccountScreen').classList.add('hidden');
+      document.getElementById('verificationScreen').classList.add('hidden');
       document.getElementById('dashboardScreen').classList.add('hidden');
       document.getElementById('alertsScreen').classList.add('hidden');
+    }
+
+    function showLogin() {
+      hideAllScreens();
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function showCreateAccount() {
+      hideAllScreens();
+      document.getElementById('createAccountScreen').classList.remove('hidden');
     }
 
     function showDashboard() {
-      document.getElementById('loginScreen').classList.add('hidden');
+      hideAllScreens();
       document.getElementById('dashboardScreen').classList.remove('hidden');
-      document.getElementById('alertsScreen').classList.add('hidden');
     }
 
     function showAlerts() {
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('dashboardScreen').classList.add('hidden');
+      hideAllScreens();
       document.getElementById('alertsScreen').classList.remove('hidden');
+    }
+
+    function registerUser() {
+      const fullName = document.getElementById('fullName').value.trim();
+      const age = document.getElementById('age').value.trim();
+      const weight = document.getElementById('weight').value.trim();
+      const healthCondition = document.getElementById('healthCondition').value.trim();
+      const dailySteps = document.getElementById('dailySteps').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value.trim();
+
+      if (!fullName || !age || !weight || !healthCondition || !dailySteps || !email || !password) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (!email.includes("@") || !email.includes(".")) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      storedUser = {
+        fullName,
+        age,
+        weight,
+        healthCondition,
+        dailySteps,
+        email,
+        password,
+        verified: false
+      };
+
+      generatedVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('generatedCodeText').textContent = generatedVerificationCode;
+
+      hideAllScreens();
+      document.getElementById('verificationScreen').classList.remove('hidden');
+    }
+
+    function verifyCode() {
+      const enteredCode = document.getElementById('verificationCodeInput').value.trim();
+
+      if (enteredCode === generatedVerificationCode) {
+        storedUser.verified = true;
+        fillProfileData();
+        alert("Email verified successfully!");
+        showDashboard();
+      } else {
+        alert("Incorrect verification code.");
+      }
+    }
+
+    function loginUser() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      if (!storedUser) {
+        alert("Please create a new account first.");
+        return;
+      }
+
+      if (!storedUser.verified) {
+        alert("Please verify your email first.");
+        return;
+      }
+
+      if (email === storedUser.email && password === storedUser.password) {
+        fillProfileData();
+        showDashboard();
+      } else {
+        alert("Invalid email or password.");
+      }
+    }
+
+    function fillProfileData() {
+      if (!storedUser) return;
+
+      document.getElementById('profileName').textContent = storedUser.fullName;
+      document.getElementById('profileAge').textContent = storedUser.age;
+      document.getElementById('profileWeight').textContent = storedUser.weight;
+      document.getElementById('profileHealth').textContent = storedUser.healthCondition;
+      document.getElementById('profileSteps').textContent = storedUser.dailySteps + " steps/day";
     }
 
     function addLog(message) {
