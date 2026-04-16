@@ -84,7 +84,6 @@
     }
 
     .field input,
-    .field select,
     .field textarea {
       width: 100%;
       padding: 12px 14px;
@@ -95,7 +94,6 @@
     }
 
     .field input:focus,
-    .field select:focus,
     .field textarea:focus {
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
@@ -121,6 +119,16 @@
     .secondary-btn {
       background: #f1f5f9;
       color: #0f172a;
+    }
+
+    .danger-btn {
+      background: #dc2626;
+      color: white;
+    }
+
+    .success-btn {
+      background: #0f766e;
+      color: white;
     }
 
     .small-note {
@@ -370,12 +378,57 @@
       font-size: 14px;
       line-height: 1.5;
     }
+
+    .message-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .message-number {
+      font-size: 13px;
+      color: #1d4ed8;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .message-status {
+      font-size: 12px;
+      color: #15803d;
+      margin-top: 6px;
+      font-weight: bold;
+    }
+
+    .contact-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .contact-row input {
+      flex: 1;
+    }
+
+    .mini-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .delete-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
   </style>
 </head>
 <body>
   <div class="phone">
 
-    <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="card">
       <div class="header">
         <div class="logo">🛡️</div>
@@ -405,7 +458,6 @@
       </div>
     </div>
 
-    <!-- CREATE ACCOUNT SCREEN -->
     <div id="createAccountScreen" class="card hidden">
       <div class="header">
         <div class="logo">👤</div>
@@ -454,7 +506,6 @@
       </div>
     </div>
 
-    <!-- EMAIL VERIFICATION SCREEN -->
     <div id="verificationScreen" class="card hidden">
       <div class="header">
         <div class="logo">📩</div>
@@ -478,7 +529,6 @@
       </div>
     </div>
 
-    <!-- DASHBOARD SCREEN -->
     <div id="dashboardScreen" class="hidden">
       <div class="card">
         <div class="content">
@@ -552,6 +602,14 @@
             <button class="btn notify-btn" onclick="notifyFamily()">
               🚨 Notify Family
             </button>
+
+            <button class="btn danger-btn" onclick="triggerEmergencyNow()">
+              🚑 Emergency Now
+            </button>
+
+            <button class="btn secondary-btn" onclick="showMessages()">
+              📨 View Messages
+            </button>
           </div>
 
           <div class="section">
@@ -583,7 +641,6 @@
       </div>
     </div>
 
-    <!-- ALERTS SCREEN -->
     <div id="alertsScreen" class="hidden">
       <div class="card">
         <div class="content">
@@ -621,11 +678,56 @@
         </div>
       </div>
     </div>
+
+    <div id="messagesScreen" class="hidden">
+      <div class="card">
+        <div class="content">
+          <button class="back" onclick="showDashboard()">← Back to Dashboard</button>
+
+          <div class="section">
+            <div class="section-header">
+              <h3>Emergency Contacts</h3>
+              <div class="blue-badge">Editable</div>
+            </div>
+
+            <div class="field">
+              <label>Add New Phone Number</label>
+              <input id="newPhoneNumber" type="text" placeholder="Example: +965 55330058" />
+            </div>
+
+            <button class="btn success-btn" onclick="addRecipientNumber()">Add Contact</button>
+
+            <div id="contactsList" style="margin-top:12px;"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-header">
+              <h3>Sent Health Messages</h3>
+              <div class="blue-badge">Simulation</div>
+            </div>
+
+            <div id="messagesContainer">
+              <div class="message-card">
+                <div class="message-number">To: +965 55330058</div>
+                <div class="text">No health alerts have been sent yet.</div>
+                <div class="message-status">Waiting</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn secondary-btn" onclick="sendHealthSummary()">
+            📋 Send Health Summary
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
     let storedUser = null;
     let generatedVerificationCode = "";
+    let recipientNumbers = ["+965 55330058", "+965 60001122"];
 
     function hideAllScreens() {
       document.getElementById('loginScreen').classList.add('hidden');
@@ -633,6 +735,7 @@
       document.getElementById('verificationScreen').classList.add('hidden');
       document.getElementById('dashboardScreen').classList.add('hidden');
       document.getElementById('alertsScreen').classList.add('hidden');
+      document.getElementById('messagesScreen').classList.add('hidden');
     }
 
     function showLogin() {
@@ -653,6 +756,12 @@
     function showAlerts() {
       hideAllScreens();
       document.getElementById('alertsScreen').classList.remove('hidden');
+    }
+
+    function showMessages() {
+      hideAllScreens();
+      document.getElementById('messagesScreen').classList.remove('hidden');
+      renderContacts();
     }
 
     function registerUser() {
@@ -748,6 +857,69 @@
       log.prepend(newItem);
     }
 
+    function renderContacts() {
+      const list = document.getElementById("contactsList");
+      list.innerHTML = "";
+
+      recipientNumbers.forEach((number, index) => {
+        const row = document.createElement("div");
+        row.className = "contact-row";
+        row.innerHTML = `
+          <input type="text" value="${number}" readonly />
+          <button class="mini-btn delete-btn" onclick="deleteRecipientNumber(${index})">Delete</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function addRecipientNumber() {
+      const input = document.getElementById("newPhoneNumber");
+      const number = input.value.trim();
+
+      if (!number) {
+        alert("Please enter a phone number.");
+        return;
+      }
+
+      recipientNumbers.push(number);
+      input.value = "";
+      renderContacts();
+      alert("Contact added successfully.");
+    }
+
+    function deleteRecipientNumber(index) {
+      recipientNumbers.splice(index, 1);
+      renderContacts();
+    }
+
+    function addMessageToRecipients(messageText) {
+      const container = document.getElementById("messagesContainer");
+      container.innerHTML = "";
+
+      recipientNumbers.forEach((number) => {
+        const card = document.createElement("div");
+        card.className = "message-card";
+        card.innerHTML = `
+          <div class="message-number">To: ${number}</div>
+          <div class="text">${messageText}</div>
+          <div class="message-status">Delivered (Simulated)</div>
+        `;
+        container.prepend(card);
+      });
+    }
+
+    function sendHealthSummary() {
+      if (!storedUser) {
+        alert("No profile data available.");
+        return;
+      }
+
+      const summary = `Health Summary: Name ${storedUser.fullName}, Age ${storedUser.age}, Health Condition ${storedUser.healthCondition}, Daily Steps ${storedUser.dailySteps}. Current system status: ${document.getElementById("systemStatus").textContent}.`;
+      addMessageToRecipients(summary);
+      addLog("📋 Health summary sent to emergency contacts");
+      alert("Health summary sent successfully.");
+    }
+
     function checkActivity() {
       let activity = Math.random();
 
@@ -793,6 +965,7 @@
         detailDoor.textContent = "No recent activity";
 
         addLog("🚨 Emergency detected by activity monitoring system");
+        addMessageToRecipients("Emergency health alert: No movement detected for 2 hours. Immediate check is recommended.");
       } else if (activity < 0.5) {
         systemStatus.textContent = "Warning";
         systemStatus.style.color = "orange";
@@ -819,6 +992,7 @@
         detailDoor.textContent = "Limited activity";
 
         addLog("⚠️ Warning: low activity detected");
+        addMessageToRecipients("Health warning: Activity is lower than normal. Please check the elderly person.");
       } else {
         systemStatus.textContent = "Active";
         systemStatus.style.color = "green";
@@ -845,6 +1019,7 @@
         detailDoor.textContent = "No recent activity";
 
         addLog("✅ Normal activity detected");
+        addMessageToRecipients("Daily health update: Activity is normal and the elderly condition is stable.");
       }
     }
 
@@ -854,7 +1029,22 @@
       document.getElementById('alertStatusText').style.color = '#15803d';
       document.getElementById('alertSubText').textContent = 'Emergency notification was simulated and logged successfully.';
       addLog("📩 Emergency alert sent to family members (simulated)");
+      addMessageToRecipients("Emergency notification: The family has been notified from the SilentCare system.");
       showDashboard();
+    }
+
+    function triggerEmergencyNow() {
+      document.getElementById("systemStatus").textContent = "Emergency";
+      document.getElementById("systemStatus").style.color = "red";
+      document.getElementById("systemStatusNote").textContent = "Manual emergency activated";
+
+      document.getElementById("alertStatusText").textContent = "🚨 Manual emergency activated!";
+      document.getElementById("alertStatusText").style.color = "red";
+      document.getElementById("alertSubText").textContent = "An urgent health alert was triggered manually from the system.";
+
+      addLog("🚑 Manual emergency button activated");
+      addMessageToRecipients("Manual emergency alert: Immediate help may be required for the elderly person.");
+      alert("Emergency alert sent to all saved contacts.");
     }
   </script>
 </body>
